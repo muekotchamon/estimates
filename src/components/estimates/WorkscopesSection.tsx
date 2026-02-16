@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  RulerIcon,
   PencilIcon,
   Trash2Icon,
   ChevronDownIcon,
   PlusIcon,
   FileIcon,
-  LayoutTemplateIcon } from
-'lucide-react';
+  LayoutTemplateIcon,
+  GripVerticalIcon,
+} from 'lucide-react';
 import { useDesign } from '../../context/DesignContext';
-type MeasurementTab = 'roofing' | 'flat-roof' | 'roof-cleaning';
+
+type MeasureSubTab = 'roofing' | 'flat-roof' | 'roof-cleaning';
+
+const measureTabs: { id: MeasureSubTab; label: string }[] = [
+  { id: 'roofing', label: 'Roofing' },
+  { id: 'flat-roof', label: 'Flat Roof' },
+  { id: 'roof-cleaning', label: 'Roof Cleaning' },
+];
 
 export function WorkscopesSection() {
   const { designData } = useDesign();
   const { measurementData, lineItems, estimateTotal, workscopeLabel } = designData.workscopes;
-  const [activeTab, setActiveTab] = useState<MeasurementTab>('roofing');
+  const [measureTab, setMeasureTab] = useState<MeasureSubTab>('roofing');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(
     new Set(lineItems.map((i) => i.sort))
   );
@@ -30,22 +37,6 @@ export function WorkscopesSection() {
       return next;
     });
   };
-  const tabs: {
-    id: MeasurementTab;
-    label: string;
-  }[] = [
-  {
-    id: 'roofing',
-    label: 'Roofing'
-  },
-  {
-    id: 'flat-roof',
-    label: 'Flat Roof'
-  },
-  {
-    id: 'roof-cleaning',
-    label: 'Roof Cleaning'
-  }];
 
   return (
     <motion.div
@@ -63,65 +54,43 @@ export function WorkscopesSection() {
       }}
       className="space-y-4">
 
-      {/* Site Measurements */}
+      {/* ส่วน Measurement — แท็บ Roofing / Flat Roof / Roof Cleaning + กริดตัวเลข (อยู่หน้า Work scope เหมือนเดิม) */}
       <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm" data-card>
-        <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-[#212529] flex items-center gap-2">
-            <RulerIcon className="w-4 h-4 text-gray-400" />
-            Site Measurements
-          </h3>
-          <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-500 bg-gray-50 border border-gray-100 rounded-lg hover:bg-gray-100 transition-colors">
-            <PencilIcon className="w-3 h-3" />
-            Edit
-          </button>
-        </div>
-
-        {/* Measurement tabs */}
         <div className="px-4 pt-2 border-b border-gray-100">
           <div className="flex gap-0">
-            {tabs.map((tab) =>
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`relative px-4 py-2 text-xs font-medium transition-colors border-b-2 ${activeTab === tab.id ? '' : 'text-gray-500 border-transparent hover:text-gray-700'}`}
-              style={activeTab === tab.id ? { color: 'var(--accent)', borderColor: 'var(--accent)' } : undefined}
-            >
-
+            {measureTabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setMeasureTab(tab.id)}
+                className={`relative px-4 py-2 text-xs font-medium transition-colors border-b-2 ${measureTab === tab.id ? '' : 'text-gray-500 border-transparent hover:text-gray-700'}`}
+                style={measureTab === tab.id ? { color: 'var(--accent)', borderColor: 'var(--accent)' } : undefined}
+              >
                 {tab.label}
               </button>
-            )}
+            ))}
           </div>
         </div>
-
-        {/* Measurement grid */}
         <div className="p-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {(measurementData[activeTab] ?? measurementData.roofing).map((m) =>
-            <div
-              key={m.label}
-              className="bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-100">
-
-                <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">
-                  {m.label}
-                </p>
+            {(measurementData[measureTab] ?? measurementData.roofing).map((m) => (
+              <div key={m.label} className="bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-100">
+                <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">{m.label}</p>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-lg font-bold text-[#212529]">
-                    {m.value}
-                  </span>
+                  <span className="text-lg font-bold text-[#212529]">{m.value}</span>
                   <span className="text-xs text-gray-400">{m.unit}</span>
                 </div>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Workscopes Table */}
+      {/* Work scope table */}
       <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm" data-card>
         <div className="px-4 py-3 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h3 className="text-sm font-semibold text-[#212529]">
-              Workscopes
+              Work scope
               <span className="text-gray-400 font-normal ml-1.5">
                 ({workscopeLabel})
               </span>
@@ -148,23 +117,35 @@ export function WorkscopesSection() {
           <table className="w-full text-sm" role="table">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50">
-                <th className="text-left px-5 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-12">
-                  #
+                <th className="text-left px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-12">
+                  <span className="inline-flex items-center gap-1">
+                    <GripVerticalIcon className="w-3.5 h-3.5 text-gray-400" aria-hidden />
+                    Sort
+                  </span>
                 </th>
                 <th className="text-left px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">
-                  Type
+                  <span className="inline-flex items-center gap-1">
+                    <GripVerticalIcon className="w-3.5 h-3.5 text-gray-400" aria-hidden />
+                    Type
+                  </span>
                 </th>
                 <th className="text-left px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Product
                 </th>
                 <th className="text-right px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">
-                  Unit Cost
+                  QTY Cost
                 </th>
                 <th className="text-right px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-20">
-                  Qty
+                  QTY
                 </th>
                 <th className="text-right px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">
                   Total
+                </th>
+                <th className="text-left px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-20">
+                  Order
+                </th>
+                <th className="text-left px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">
+                  Unit Name
                 </th>
                 <th className="text-right px-5 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">
                   Actions
@@ -185,22 +166,23 @@ export function WorkscopesSection() {
                     }}
                     className="group border-b border-gray-50 last:border-b-0">
 
-                    <td colSpan={7} className="p-0">
+                    <td colSpan={9} className="p-0">
                       <div>
                         {/* Main row */}
                         <div
                           className="flex items-center cursor-pointer hover:bg-gray-50/50 transition-colors"
                           onClick={() => toggleRow(item.sort)}>
 
-                          <div className="px-5 py-3 w-12 text-gray-500 font-mono text-xs">
+                          <div className="px-3 py-3 w-12 flex items-center gap-0.5 text-gray-500 font-mono text-xs">
+                            <GripVerticalIcon className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" aria-hidden />
                             {item.sort}
                           </div>
                           <div className="px-3 py-3 w-24">
                             <span
-                              className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${item.type === 'Services' ? '' : item.type === 'Materials' ? 'bg-amber-50 text-amber-600' : 'bg-gray-100 text-gray-500'}`}
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${item.type === 'Services' ? '' : item.type === 'Materials' ? 'bg-amber-50 text-amber-600' : 'bg-gray-100 text-gray-500'}`}
                               style={item.type === 'Services' ? { backgroundColor: 'var(--accent-light)', color: 'var(--accent)' } : undefined}
                             >
-
+                              <GripVerticalIcon className="w-3 h-3 text-current opacity-60" aria-hidden />
                               {item.type}
                             </span>
                           </div>
@@ -215,12 +197,17 @@ export function WorkscopesSection() {
                               className={`tabular-nums ${parseInt(item.qty.replace(',', '')) > 1 ? 'font-medium' : 'text-gray-600'}`}
                               style={parseInt(item.qty.replace(',', '')) > 1 ? { color: 'var(--accent)' } : undefined}
                             >
-
                               {item.qty}
                             </span>
                           </div>
                           <div className="px-3 py-3 w-24 text-right font-semibold text-[#212529] tabular-nums">
                             {item.total}
+                          </div>
+                          <div className="px-3 py-3 w-20 text-gray-600 text-sm">
+                            {item.order}
+                          </div>
+                          <div className="px-3 py-3 w-24 text-gray-600 text-sm">
+                            {item.unitName}
                           </div>
                           <div className="px-5 py-3 w-24 text-right">
                             <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

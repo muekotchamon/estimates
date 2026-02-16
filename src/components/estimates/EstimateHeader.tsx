@@ -1,8 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRightIcon, ChevronDownIcon } from 'lucide-react';
+import { ChevronRightIcon, ChevronDownIcon, MessageSquareIcon } from 'lucide-react';
 import { useDesign } from '../../context/DesignContext';
 import { StatusPipeline } from './StatusPipeline';
+
+interface ActionsDropdownsProps {
+  actionsRef: React.RefObject<HTMLDivElement>;
+  statusRef: React.RefObject<HTMLDivElement>;
+  actionsOpen: boolean;
+  setActionsOpen: (v: boolean) => void;
+  statusOpen: boolean;
+  setStatusOpen: (v: boolean) => void;
+  actionOptions: string[];
+  statusOptions: string[];
+  notesUnread?: number;
+  onOpenNotes?: () => void;
+}
+
 function ActionsDropdowns({
   actionsRef,
   statusRef,
@@ -12,16 +26,9 @@ function ActionsDropdowns({
   setStatusOpen,
   actionOptions,
   statusOptions,
-}: {
-  actionsRef: React.RefObject<HTMLDivElement | null>;
-  statusRef: React.RefObject<HTMLDivElement | null>;
-  actionsOpen: boolean;
-  setActionsOpen: (v: boolean) => void;
-  statusOpen: boolean;
-  setStatusOpen: (v: boolean) => void;
-  actionOptions: string[];
-  statusOptions: string[];
-}) {
+  notesUnread = 0,
+  onOpenNotes,
+}: ActionsDropdownsProps) {
   return (
     <div className="flex items-center gap-2 flex-shrink-0">
       <div className="relative" ref={actionsRef}>
@@ -78,11 +85,32 @@ function ActionsDropdowns({
           )}
         </AnimatePresence>
       </div>
+      {onOpenNotes != null && (
+        <button
+          type="button"
+          onClick={() => { setActionsOpen(false); setStatusOpen(false); onOpenNotes(); }}
+          className="relative inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          aria-label={notesUnread > 0 ? `Notes & Activities (${notesUnread} unread)` : 'Notes & Activities'}
+        >
+          <MessageSquareIcon className="w-4 h-4 text-gray-500" />
+          <span>Notes & Activities</span>
+          {notesUnread > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full text-[10px] font-bold text-white bg-red-500 shadow-sm">
+              {notesUnread > 99 ? '99+' : notesUnread}
+            </span>
+          )}
+        </button>
+      )}
     </div>
   );
 }
 
-export function EstimateHeader() {
+export interface EstimateHeaderProps {
+  notesUnread?: number;
+  onOpenNotes?: () => void;
+}
+
+export function EstimateHeader({ notesUnread = 0, onOpenNotes }: EstimateHeaderProps) {
   const { designData } = useDesign();
   const { estimateNumber, title, status, createdDate } = designData.header;
   const layoutVariant = designData.layoutVariant;
@@ -100,6 +128,7 @@ export function EstimateHeader() {
   }, []);
   const statusOptions = ['Open', 'Quoted', 'Sold', 'Contracted', 'Closed'];
   const actionOptions = ['Duplicate', 'Quick Book'];
+  const dropdownProps = { actionsRef, statusRef, actionsOpen, setActionsOpen, statusOpen, setStatusOpen, actionOptions, statusOptions, notesUnread, onOpenNotes };
 
   // ——— Design 1: default — full header with pipeline below ———
   if (layoutVariant === 'default') {
@@ -119,7 +148,7 @@ export function EstimateHeader() {
               </div>
               <p className="text-sm text-gray-500">Estimate #{estimateNumber} · Created {createdDate}</p>
             </motion.div>
-            <ActionsDropdowns actionsRef={actionsRef} statusRef={statusRef} actionsOpen={actionsOpen} setActionsOpen={setActionsOpen} statusOpen={statusOpen} setStatusOpen={setStatusOpen} actionOptions={actionOptions} statusOptions={statusOptions} />
+            <ActionsDropdowns {...dropdownProps} />
           </div>
           <motion.div className="mt-5 bg-gray-50 rounded-lg px-5 py-3 border border-gray-100">
             <StatusPipeline />
@@ -148,7 +177,7 @@ export function EstimateHeader() {
               <div className="hidden md:block bg-gray-100 rounded-md px-3 py-1.5 border border-gray-200">
                 <StatusPipeline compact />
               </div>
-              <ActionsDropdowns actionsRef={actionsRef} statusRef={statusRef} actionsOpen={actionsOpen} setActionsOpen={setActionsOpen} statusOpen={statusOpen} setStatusOpen={setStatusOpen} actionOptions={actionOptions} statusOptions={statusOptions} />
+              <ActionsDropdowns {...dropdownProps} />
             </div>
           </div>
         </div>
@@ -173,7 +202,7 @@ export function EstimateHeader() {
             </div>
             <p className="text-xs text-gray-400 mt-0.5">{createdDate}</p>
           </div>
-          <ActionsDropdowns actionsRef={actionsRef} statusRef={statusRef} actionsOpen={actionsOpen} setActionsOpen={setActionsOpen} statusOpen={statusOpen} setStatusOpen={setStatusOpen} actionOptions={actionOptions} statusOptions={statusOptions} />
+          <ActionsDropdowns {...dropdownProps} />
         </div>
       </div>
     </header>

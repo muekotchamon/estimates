@@ -120,26 +120,29 @@ export function ContactSidebar({ hideProgress }: ContactSidebarProps) {
           </button>
         </div>
         <div className="p-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: 'var(--accent)' }}>
-                {contact.teamMember.initials}
+          {contact.teamMember ? (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: 'var(--accent)' }}>
+                  {contact.teamMember.initials}
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-[#212529]">
+                    {contact.teamMember.name}
+                  </p>
+                  <p className="text-xs text-gray-500">{contact.teamMember.role}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-[#212529]">
-                  {contact.teamMember.name}
-                </p>
-                <p className="text-xs text-gray-500">{contact.teamMember.role}</p>
-              </div>
+              <button
+                className="p-1.5 text-gray-400 rounded-md transition-colors hover:opacity-80"
+                style={{ color: 'var(--accent)' }}
+                aria-label="Edit team member">
+                <PencilIcon className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <button
-              className="p-1.5 text-gray-400 rounded-md transition-colors hover:opacity-80"
-              style={{ color: 'var(--accent)' }}
-              aria-label="Edit team member">
-
-              <PencilIcon className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          ) : (
+            <p className="text-sm text-gray-400 italic">No team member assigned</p>
+          )}
         </div>
       </motion.div>
 
@@ -163,7 +166,7 @@ export function ContactSidebar({ hideProgress }: ContactSidebarProps) {
         </div>
         <div className="px-5 py-4">
           <p className="text-sm text-gray-400 italic">
-            {contact.hasInsurance ? 'Insurance on file' : 'No insurance details added'}
+            {contact.hasInsurance === true ? 'Insurance on file' : 'No insurance details added'}
           </p>
         </div>
       </motion.div>

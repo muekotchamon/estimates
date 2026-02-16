@@ -24,7 +24,7 @@ const PHASE_ICONS: Record<number, { icon: React.ReactNode; iconBg: string; iconB
 };
 
 interface ProductionTabProps {
-  /** เมื่อใช้ในหน้า Summary ให้ซ่อน top bar และแสดงเป็น section */
+  /** เมื่อใช้ในหน้า General Info ให้ซ่อน top bar และแสดงเป็น section */
   embedded?: boolean;
 }
 
@@ -64,14 +64,14 @@ export function ProductionTab({ embedded }: ProductionTabProps) {
       transition={{ duration: 0.3 }}
       className={embedded ? 'space-y-4' : 'space-y-4'}
     >
-      {/* Top bar — ไม่แสดงเมื่อ embedded (อยู่ใต้ Summary) */}
+      {/* Top bar — ไม่แสดงเมื่อ embedded (อยู่ใต้ General Info) */}
       {!embedded && (
         <div
           className={`bg-white border border-gray-200 flex items-center justify-between ${isMinimal ? 'rounded-lg shadow-sm px-4 py-3' : isCompact ? 'rounded-lg border-l-4 px-4 py-3' : 'rounded-xl px-6 py-4'}`}
           style={isCompact ? { borderLeftColor: 'var(--accent)' } : undefined}
           data-card={isCompact || isMinimal ? true : undefined}
         >
-          <h2 className={isMinimal ? 'text-sm font-semibold text-[#212529]' : 'text-base font-semibold text-[#212529]'}>Production</h2>
+          <h2 className={isMinimal ? 'text-sm font-semibold text-[#212529]' : 'text-base font-semibold text-[#212529]'}>General Info</h2>
           <button className={`inline-flex items-center gap-1.5 text-white rounded-lg ${isMinimal ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'}`} style={{ backgroundColor: 'var(--accent)' }}>
             <SaveIcon className={isMinimal ? 'w-3 h-3' : 'w-4 h-4'} />
             Save Changes
@@ -88,7 +88,7 @@ export function ProductionTab({ embedded }: ProductionTabProps) {
             <div className={`flex items-center gap-3 ${embedded ? 'px-4 py-3' : isMinimal ? 'px-4 py-3' : 'px-6 py-4'}`}>
               <WrenchIcon className="w-4 h-4 text-gray-400" />
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Production Checklist
+                Checklist
               </h3>
               <div className="flex-1 h-px bg-gray-200" />
             </div>

@@ -2,11 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
   LayoutDashboardIcon,
-  MessageSquareIcon,
   CreditCardIcon,
   RefreshCwIcon,
   CalendarDaysIcon,
   PackageIcon,
+  RulerIcon,
+  ListChecksIcon,
   UsersIcon,
   DollarSignIcon,
   PercentIcon,
@@ -22,11 +23,12 @@ interface Tab {
   icon: React.ReactNode;
 }
 const tabs: Tab[] = [
-  { id: 'summary', label: 'Summary & Production', icon: <LayoutDashboardIcon className="w-4 h-4" /> },
-  { id: 'notes', label: 'Notes & Activities', icon: <MessageSquareIcon className="w-4 h-4" /> },
+  { id: 'summary', label: 'General Info', icon: <LayoutDashboardIcon className="w-4 h-4" /> },
   { id: 'payment', label: 'Payment', icon: <CreditCardIcon className="w-4 h-4" /> },
   { id: 'change-order', label: 'Change Order', icon: <RefreshCwIcon className="w-4 h-4" /> },
   { id: 'ordering', label: 'Ordering', icon: <PackageIcon className="w-4 h-4" /> },
+  { id: 'measurement', label: 'Measurement', icon: <RulerIcon className="w-4 h-4" /> },
+  { id: 'workscopes', label: 'Work scope', icon: <ListChecksIcon className="w-4 h-4" /> },
   { id: 'sub-contractor', label: 'Sub Contractor', icon: <UsersIcon className="w-4 h-4" /> },
   { id: 'expenses', label: 'Expenses', icon: <DollarSignIcon className="w-4 h-4" /> },
   { id: 'commission', label: 'Commission', icon: <PercentIcon className="w-4 h-4" /> },

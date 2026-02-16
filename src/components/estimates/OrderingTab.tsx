@@ -16,6 +16,7 @@ import { useDesign } from '../../context/DesignContext';
 export function OrderingTab() {
   const { designData } = useDesign();
   const orderingItems = designData.ordering;
+  const orderingProducts = designData.orderingProducts ?? [];
   const layoutVariant = designData.layoutVariant;
   const [activeSource, setActiveSource] = useState<'beacon' | 'warehouse'>('beacon');
   const isCompact = layoutVariant === 'compact';
@@ -65,7 +66,70 @@ export function OrderingTab() {
         </div>
       </div>
 
-      {/* Source tabs */}
+      {/* Products table — อยู่บน Tab Beacon/Warehouse */}
+      <div className={`bg-white border border-gray-200 overflow-hidden ${isMinimal ? 'rounded-lg shadow-sm' : 'rounded-xl'}`} data-card={isCompact || isMinimal ? true : undefined} style={isCompact ? { borderLeftWidth: 4, borderLeftColor: 'var(--accent)' } : undefined}>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-gray-50/50 border-b border-gray-100">
+                <th className="text-left px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-16">
+                  #
+                </th>
+                <th className="text-left px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">
+                  Products
+                </th>
+                <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Product Description
+                </th>
+                <th className="text-right px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-20">
+                  Quantity
+                </th>
+                <th className="text-left px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">
+                  Unit
+                </th>
+                <th className="text-left px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-20">
+                  Vendor
+                </th>
+                <th className="text-center px-3 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">
+                  is Ordered
+                </th>
+                <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">
+                  Order#
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {orderingProducts.length === 0
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <tr key={i} className="border-b border-gray-50">
+                      <td className="px-3 py-3" />
+                      <td className="px-3 py-3" />
+                      <td className="px-4 py-3" />
+                      <td className="px-3 py-3" />
+                      <td className="px-3 py-3" />
+                      <td className="px-3 py-3" />
+                      <td className="px-3 py-3" />
+                      <td className="px-4 py-3" />
+                    </tr>
+                  ))
+                : orderingProducts.map((row, i) => (
+                    <tr key={i} className="border-b border-gray-50 hover:bg-gray-50/50">
+                      <td className="px-3 py-3 tabular-nums font-medium text-[#212529]">{row.productNumber}</td>
+                      <td className="px-3 py-3 text-gray-600">{row.productLabel}</td>
+                      <td className="px-4 py-3 text-gray-700">{row.productDescription}</td>
+                      <td className="px-3 py-3 text-right tabular-nums text-gray-600">{row.quantity}</td>
+                      <td className="px-3 py-3 text-gray-600">{row.unit}</td>
+                      <td className="px-3 py-3 text-gray-600">{row.vendor}</td>
+                      <td className="px-3 py-3 text-center tabular-nums text-gray-600">{row.isOrdered || '—'}</td>
+                      <td className="px-4 py-3 text-gray-700">{row.orderNumber || '—'}</td>
+                    </tr>
+                  ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Source tabs — Beacon / Warehouse */}
       <div className={`grid grid-cols-2 gap-0 border border-gray-200 overflow-hidden ${isMinimal ? 'rounded-lg' : 'rounded-xl'}`}>
         <button
           onClick={() => setActiveSource('beacon')}
@@ -87,7 +151,7 @@ export function OrderingTab() {
         </button>
       </div>
 
-      {/* Table */}
+      {/* Item table (Color selection) */}
       <div className={`bg-white border border-gray-200 overflow-hidden ${isMinimal ? 'rounded-lg shadow-sm' : 'rounded-xl'}`} data-card={isCompact || isMinimal ? true : undefined} style={isCompact ? { borderLeftWidth: 4, borderLeftColor: 'var(--accent)' } : undefined}>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">

@@ -6,6 +6,7 @@ import { EstimateHeader } from '../components/estimates/EstimateHeader';
 import { TabNavigation } from '../components/estimates/TabNavigation';
 import { ContactSidebar } from '../components/estimates/ContactSidebar';
 import { EstimateDetails } from '../components/estimates/EstimateDetails';
+import { MeasurementTab } from '../components/estimates/MeasurementTab';
 import { WorkscopesSection } from '../components/estimates/WorkscopesSection';
 import { StatusPipeline } from '../components/estimates/StatusPipeline';
 import { NotesActivities } from '../components/estimates/NotesActivities';
@@ -20,7 +21,7 @@ import { CommissionTab } from '../components/estimates/CommissionTab';
 import { ServicesTab } from '../components/estimates/ServicesTab';
 import { DocumentsTab } from '../components/estimates/DocumentsTab';
 import { PersistentSummary } from '../components/estimates/PersistentSummary';
-import { ConstructionIcon, HardHatIcon } from 'lucide-react';
+import { ConstructionIcon, HardHatIcon, XIcon } from 'lucide-react';
 import type { DesignId } from '../data/designSets';
 const tabTransition = {
   initial: {
@@ -48,8 +49,16 @@ const DESIGN_TABS: { id: DesignId; label: string }[] = [
 export function EstimatePage() {
   const [activeTab, setActiveTab] = useState('summary');
   const [summaryCollapsed, setSummaryCollapsed] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [notesUnread, setNotesUnread] = useState(2);
   const { designId, setDesignId, designData } = useDesign();
   const theme = designData.theme;
+
+  const handleOpenNotes = () => {
+    setNotesOpen(true);
+    setNotesUnread(0);
+  };
+
   return (
     <div className="min-h-screen w-full bg-[#f0f2f5]" data-theme={theme} data-layout={designData.layoutVariant}>
       {/* Design selector tabs — each design has its own accent */}
@@ -75,112 +84,122 @@ export function EstimatePage() {
       </div>
       {/* Sticky Header + Summary */}
       <div className="sticky top-[45px] z-30 bg-white">
-        <EstimateHeader />
+        <EstimateHeader notesUnread={notesUnread} onOpenNotes={handleOpenNotes} />
         <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
         <PersistentSummary collapsed={summaryCollapsed} onToggle={() => setSummaryCollapsed((v) => !v)} />
       </div>
+
+      {/* Notes & Activities slide-over panel */}
+      <AnimatePresence>
+        {notesOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black/40 z-[100]"
+              onClick={() => setNotesOpen(false)}
+              aria-hidden
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="fixed top-0 right-0 bottom-0 w-full max-w-lg bg-white shadow-2xl z-[101] flex flex-col"
+            >
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white flex-shrink-0">
+                <h2 className="text-base font-semibold text-[#212529]">Notes & Activities</h2>
+                <button
+                  type="button"
+                  onClick={() => setNotesOpen(false)}
+                  className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                  aria-label="Close"
+                >
+                  <XIcon className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-4">
+                <NotesActivities />
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Main Content */}
       <main className="max-w-[1800px] mx-auto px-3 py-8">
         <AnimatePresence mode="wait">
           {activeTab === 'summary' && (
-            <motion.div key="summary" {...tabTransition} className="space-y-8">
-              {/* Order: 1) Overview 2) Scope & total 3) Production */}
+            <motion.div key="summary" {...tabTransition} className="space-y-6">
+              {/* Default: main column = Details on top, Overview below; sidebar right */}
               {designData.layoutVariant === 'default' && (
-                <>
-                  <div className="flex flex-col lg:flex-row gap-8">
-                    <div className="flex-1 min-w-0 space-y-6">
-                      <div>
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Estimate overview</p>
-                        <div className="space-y-6">
-                          <EstimateDetails />
-                          <WorkscopesSection />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-full lg:w-[340px] flex-shrink-0 lg:sticky lg:top-[180px] lg:self-start">
-                      <ContactSidebar hideProgress />
-                    </div>
-                  </div>
-                  <section className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden" aria-label="Production">
-                    <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px] lg:items-start">
+                  <div className="min-w-0 space-y-6">
+                    <EstimateDetails />
+                    <section className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden" aria-label="General Info">
+                      <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
                         <HardHatIcon className="w-4 h-4 text-gray-400" />
-                        <h2 className="text-sm font-semibold text-[#212529]">Production</h2>
+                        <h2 className="text-sm font-semibold text-[#212529]">Overview & delivery</h2>
                       </div>
-                      <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider hidden sm:block">Production & delivery</p>
-                    </div>
-                    <div className="p-5">
-                      <ProductionTab embedded />
-                    </div>
-                  </section>
-                </>
-              )}
-              {designData.layoutVariant === 'compact' && (
-                <>
-                  <div className="flex flex-col lg:flex-row gap-8">
-                    <div className="w-full lg:w-[300px] flex-shrink-0 order-2 lg:order-1 lg:sticky lg:top-[160px] lg:self-start">
-                      <ContactSidebar hideProgress />
-                    </div>
-                    <div className="flex-1 min-w-0 space-y-6 order-1 lg:order-2">
-                      <div>
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Estimate overview</p>
-                        <div className="space-y-6">
-                          <EstimateDetails />
-                          <WorkscopesSection />
-                        </div>
+                      <div className="p-5">
+                        <ProductionTab embedded />
                       </div>
-                    </div>
+                    </section>
                   </div>
-                  <section className="bg-white rounded-xl border border-gray-200 overflow-hidden order-3" data-card aria-label="Production">
-                    <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
-                      <HardHatIcon className="w-4 h-4 text-gray-400" />
-                      <h2 className="text-sm font-semibold text-[#212529]">Production</h2>
-                    </div>
-                    <div className="p-5">
-                      <ProductionTab embedded />
-                    </div>
-                  </section>
-                </>
+                  <div className="lg:sticky lg:top-[180px]">
+                    <ContactSidebar hideProgress />
+                  </div>
+                </div>
               )}
+              {/* Compact: sidebar left; main = Details on top, Overview below */}
+              {designData.layoutVariant === 'compact' && (
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[300px_1fr] lg:items-start">
+                  <div className="lg:sticky lg:top-[160px]">
+                    <ContactSidebar hideProgress />
+                  </div>
+                  <div className="min-w-0 space-y-6">
+                    <EstimateDetails />
+                    <section className="bg-white rounded-xl border border-gray-200 overflow-hidden" data-card aria-label="General Info">
+                      <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
+                        <HardHatIcon className="w-4 h-4 text-gray-400" />
+                        <h2 className="text-sm font-semibold text-[#212529]">Overview & delivery</h2>
+                      </div>
+                      <div className="p-5">
+                        <ProductionTab embedded />
+                      </div>
+                    </section>
+                  </div>
+                </div>
+              )}
+              {/* Minimal: Status strip → main column (Details on top, Overview below) + sidebar */}
               {designData.layoutVariant === 'minimal' && (
                 <>
                   <div className="bg-white rounded-lg border border-gray-200 shadow-sm px-5 py-4">
                     <StatusPipeline />
                   </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-6">
-                      <div>
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Estimate overview</p>
-                        <div className="space-y-6">
-                          <EstimateDetails />
-                          <WorkscopesSection />
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px] lg:items-start">
+                    <div className="min-w-0 space-y-6">
+                      <EstimateDetails />
+                      <section className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden" aria-label="General Info">
+                        <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+                          <HardHatIcon className="w-4 h-4 text-gray-400" />
+                          <h2 className="text-sm font-semibold text-[#212529]">Overview & delivery</h2>
                         </div>
-                      </div>
+                        <div className="p-5">
+                          <ProductionTab embedded />
+                        </div>
+                      </section>
                     </div>
-                    <div className="lg:col-span-1 lg:sticky lg:top-[160px] lg:self-start">
+                    <div className="lg:sticky lg:top-[160px]">
                       <ContactSidebar hideProgress />
                     </div>
                   </div>
-                  <section className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden" aria-label="Production">
-                    <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
-                      <HardHatIcon className="w-4 h-4 text-gray-400" />
-                      <h2 className="text-sm font-semibold text-[#212529]">Production</h2>
-                    </div>
-                    <div className="p-5">
-                      <ProductionTab embedded />
-                    </div>
-                  </section>
                 </>
               )}
             </motion.div>
           )}
-
-          {activeTab === 'notes' &&
-          <motion.div key="notes" {...tabTransition}>
-              <NotesActivities />
-            </motion.div>
-          }
 
           {activeTab === 'payment' &&
           <motion.div key="payment" {...tabTransition}>
@@ -205,6 +224,18 @@ export function EstimatePage() {
               <OrderingTab />
             </motion.div>
           }
+
+          {activeTab === 'measurement' && (
+            <motion.div key="measurement" {...tabTransition}>
+              <MeasurementTab />
+            </motion.div>
+          )}
+
+          {activeTab === 'workscopes' && (
+            <motion.div key="workscopes" {...tabTransition}>
+              <WorkscopesSection />
+            </motion.div>
+          )}
 
           {activeTab === 'sub-contractor' &&
           <motion.div key="sub-contractor" {...tabTransition}>
@@ -238,11 +269,12 @@ export function EstimatePage() {
 
           {![
           'summary',
-          'notes',
           'payment',
           'change-order',
           'schedules',
           'ordering',
+          'measurement',
+          'workscopes',
           'sub-contractor',
           'expenses',
           'commission',

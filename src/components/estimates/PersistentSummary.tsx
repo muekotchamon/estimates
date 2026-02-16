@@ -41,7 +41,7 @@ export function PersistentSummary({ collapsed, onToggle }: PersistentSummaryProp
           aria-expanded={!collapsed}
         >
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-sm font-semibold text-[#212529]">Summary</span>
+            <span className="text-sm font-semibold text-[#212529]">General Info</span>
             <span className="text-sm font-bold tabular-nums truncate" style={{ color: 'var(--accent)' }}>
               {offeredFormatted}
             </span>
