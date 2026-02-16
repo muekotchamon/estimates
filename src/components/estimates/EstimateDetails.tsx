@@ -20,21 +20,21 @@ export function EstimateDetails() {
         duration: 0.35,
         delay: 0.15
       }}
-      className="bg-white rounded-xl border border-gray-200 overflow-hidden"
+      className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm"
       data-card>
 
-      <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
+      <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-[#212529] flex items-center gap-2">
           <FileTextIcon className="w-4 h-4 text-gray-400" />
           Estimate Details
         </h3>
-        <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
+        <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-500 bg-gray-50 border border-gray-100 rounded-lg hover:bg-gray-100 transition-colors">
           <PencilIcon className="w-3 h-3" />
           Edit
         </button>
       </div>
-      <div className="p-5">
-        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+      <div className="p-4">
+        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
           {details.map((detail, i) =>
           <motion.div
             key={detail.label}

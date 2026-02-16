@@ -64,20 +64,20 @@ export function WorkscopesSection() {
       className="space-y-4">
 
       {/* Site Measurements */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden" data-card>
-        <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm" data-card>
+        <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-[#212529] flex items-center gap-2">
             <RulerIcon className="w-4 h-4 text-gray-400" />
             Site Measurements
           </h3>
-          <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
+          <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-500 bg-gray-50 border border-gray-100 rounded-lg hover:bg-gray-100 transition-colors">
             <PencilIcon className="w-3 h-3" />
             Edit
           </button>
         </div>
 
         {/* Measurement tabs */}
-        <div className="px-5 pt-3 border-b border-gray-100">
+        <div className="px-4 pt-2 border-b border-gray-100">
           <div className="flex gap-0">
             {tabs.map((tab) =>
             <button
@@ -94,7 +94,7 @@ export function WorkscopesSection() {
         </div>
 
         {/* Measurement grid */}
-        <div className="p-5">
+        <div className="p-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {(measurementData[activeTab] ?? measurementData.roofing).map((m) =>
             <div
@@ -117,8 +117,8 @@ export function WorkscopesSection() {
       </div>
 
       {/* Workscopes Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden" data-card>
-        <div className="px-5 py-3.5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm" data-card>
+        <div className="px-4 py-3 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h3 className="text-sm font-semibold text-[#212529]">
               Workscopes
@@ -132,7 +132,7 @@ export function WorkscopesSection() {
               <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: 'var(--bs-success)' }} />
               Contract
             </span>
-            <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
+            <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-500 bg-gray-50 border border-gray-100 rounded-lg hover:bg-gray-100 transition-colors">
               <LayoutTemplateIcon className="w-3 h-3" />
               Templates
             </button>
@@ -288,7 +288,7 @@ export function WorkscopesSection() {
         </div>
 
         {/* Summary footer */}
-        <div className="px-5 py-3.5 border-t border-gray-200 bg-gray-50/50 flex items-center justify-between">
+        <div className="px-4 py-3 border-t border-gray-100 bg-gray-50/70 flex items-center justify-between">
           <p className="text-xs text-gray-500">{lineItems.length} line items</p>
           <div className="text-right">
             <p className="text-xs text-gray-400 uppercase tracking-wider">
