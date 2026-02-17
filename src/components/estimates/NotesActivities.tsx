@@ -54,14 +54,14 @@ const itemVariants = {
   })
 };
 export function NotesActivities() {
-  const { designData } = useDesign();
+  const { designId, designData } = useDesign();
   const entries = designData.notes;
   const layoutVariant = designData.layoutVariant;
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('all');
   const isCompact = layoutVariant === 'compact';
   const isMinimal = layoutVariant === 'minimal';
-  // Design 3 (minimal) uses Design 1 note layout in this panel
-  const notesUseDefaultLayout = layoutVariant === 'default' || layoutVariant === 'minimal';
+  // Design 3 always uses Design 1 note layout in this panel
+  const notesUseDefaultLayout = layoutVariant === 'default' || designId === 3;
 
   const feedContentCompactMinimal = (
     <>
