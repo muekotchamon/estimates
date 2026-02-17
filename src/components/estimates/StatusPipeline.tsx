@@ -3,14 +3,20 @@ import { motion } from 'framer-motion';
 import { CheckCircleIcon, CircleIcon } from 'lucide-react';
 import { useDesign } from '../../context/DesignContext';
 
+const STATUS_STEPS = ['Open', 'Quoted', 'Sold', 'Contracted', 'Closed'] as const;
+
 interface StatusPipelineProps {
   compact?: boolean;
 }
 
 export function StatusPipeline({ compact }: StatusPipelineProps) {
   const { designData } = useDesign();
-  const steps = designData.statusPipeline;
-  const currentIndex = steps.findIndex((s) => s.status === 'current');
+  const currentStatus = designData.header.status;
+  const currentIndex = STATUS_STEPS.indexOf(currentStatus as (typeof STATUS_STEPS)[number]);
+  const steps = STATUS_STEPS.map((label, i) => ({
+    label,
+    status: i < currentIndex ? ('completed' as const) : i === currentIndex ? ('current' as const) : ('upcoming' as const),
+  }));
   const size = compact ? 'w-5 h-5' : 'w-7 h-7';
   const iconSize = compact ? 'w-2.5 h-2.5' : 'w-3 h-3';
   const labelClass = compact ? 'text-[10px]' : 'text-xs';
