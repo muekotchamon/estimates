@@ -11,18 +11,9 @@ import {
 } from 'lucide-react';
 import { useDesign } from '../../context/DesignContext';
 
-type MeasureSubTab = 'roofing' | 'flat-roof' | 'roof-cleaning';
-
-const measureTabs: { id: MeasureSubTab; label: string }[] = [
-  { id: 'roofing', label: 'Roofing' },
-  { id: 'flat-roof', label: 'Flat Roof' },
-  { id: 'roof-cleaning', label: 'Roof Cleaning' },
-];
-
 export function WorkscopesSection() {
   const { designData } = useDesign();
-  const { measurementData, lineItems, estimateTotal, workscopeLabel } = designData.workscopes;
-  const [measureTab, setMeasureTab] = useState<MeasureSubTab>('roofing');
+  const { lineItems, estimateTotal, workscopeLabel } = designData.workscopes;
   const [expandedRows, setExpandedRows] = useState<Set<string>>(
     new Set(lineItems.map((i) => i.sort))
   );
@@ -53,37 +44,6 @@ export function WorkscopesSection() {
         delay: 0.25
       }}
       className="space-y-4">
-
-      {/* ส่วน Measurement — แท็บ Roofing / Flat Roof / Roof Cleaning + กริดตัวเลข (อยู่หน้า Work scope เหมือนเดิม) */}
-      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm" data-card>
-        <div className="px-4 pt-2 border-b border-gray-100">
-          <div className="flex gap-0">
-            {measureTabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setMeasureTab(tab.id)}
-                className={`relative px-4 py-2 text-xs font-medium transition-colors border-b-2 ${measureTab === tab.id ? '' : 'text-gray-500 border-transparent hover:text-gray-700'}`}
-                style={measureTab === tab.id ? { color: 'var(--accent)', borderColor: 'var(--accent)' } : undefined}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="p-4">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {(measurementData[measureTab] ?? measurementData.roofing).map((m) => (
-              <div key={m.label} className="bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-100">
-                <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">{m.label}</p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-lg font-bold text-[#212529]">{m.value}</span>
-                  <span className="text-xs text-gray-400">{m.unit}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Work scope table */}
       <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm" data-card>

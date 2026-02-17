@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRightIcon, ChevronDownIcon, MessageSquareIcon } from 'lucide-react';
 import { useDesign } from '../../context/DesignContext';
-import { StatusPipeline } from './StatusPipeline';
 
 interface ActionsDropdownsProps {
   actionsRef: React.RefObject<HTMLDivElement>;
@@ -150,9 +149,6 @@ export function EstimateHeader({ notesUnread = 0, onOpenNotes }: EstimateHeaderP
             </motion.div>
             <ActionsDropdowns {...dropdownProps} />
           </div>
-          <motion.div className="mt-5 bg-gray-50 rounded-lg px-5 py-3 border border-gray-100">
-            <StatusPipeline />
-          </motion.div>
         </div>
       </header>
     );
@@ -173,12 +169,7 @@ export function EstimateHeader({ notesUnread = 0, onOpenNotes }: EstimateHeaderP
             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border" style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent)', borderColor: 'var(--accent-border)' }}>{status}</span>
             <span className="text-xs text-gray-400 hidden sm:inline">· {createdDate}</span>
             <div className="flex-1 min-w-0" />
-            <div className="flex items-center gap-2">
-              <div className="hidden md:block bg-gray-100 rounded-md px-3 py-1.5 border border-gray-200">
-                <StatusPipeline compact />
-              </div>
-              <ActionsDropdowns {...dropdownProps} />
-            </div>
+            <ActionsDropdowns {...dropdownProps} />
           </div>
         </div>
       </header>

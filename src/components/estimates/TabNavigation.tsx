@@ -24,17 +24,17 @@ interface Tab {
 }
 const tabs: Tab[] = [
   { id: 'summary', label: 'General Info', icon: <LayoutDashboardIcon className="w-4 h-4" /> },
+  { id: 'schedules', label: 'Plan', icon: <CalendarDaysIcon className="w-4 h-4" /> },
+  { id: 'measurement', label: 'Measurement', icon: <RulerIcon className="w-4 h-4" /> },
+  { id: 'workscopes', label: 'Work scope', icon: <ListChecksIcon className="w-4 h-4" /> },
   { id: 'payment', label: 'Payment', icon: <CreditCardIcon className="w-4 h-4" /> },
   { id: 'change-order', label: 'Change Order', icon: <RefreshCwIcon className="w-4 h-4" /> },
   { id: 'ordering', label: 'Ordering', icon: <PackageIcon className="w-4 h-4" /> },
-  { id: 'measurement', label: 'Measurement', icon: <RulerIcon className="w-4 h-4" /> },
-  { id: 'workscopes', label: 'Work scope', icon: <ListChecksIcon className="w-4 h-4" /> },
-  { id: 'sub-contractor', label: 'Sub Contractor', icon: <UsersIcon className="w-4 h-4" /> },
+  { id: 'sub-contractor', label: 'Crews', icon: <UsersIcon className="w-4 h-4" /> },
   { id: 'expenses', label: 'Expenses', icon: <DollarSignIcon className="w-4 h-4" /> },
   { id: 'commission', label: 'Commission', icon: <PercentIcon className="w-4 h-4" /> },
   { id: 'services', label: 'Services', icon: <WrenchIcon className="w-4 h-4" /> },
   { id: 'documents', label: 'Documents', icon: <Images className="w-4 h-4" /> },
-  { id: 'schedules', label: 'Schedules', icon: <CalendarDaysIcon className="w-4 h-4" /> },
 ];
 
 interface TabNavigationProps {

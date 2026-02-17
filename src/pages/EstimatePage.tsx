@@ -8,7 +8,6 @@ import { ContactSidebar } from '../components/estimates/ContactSidebar';
 import { EstimateDetails } from '../components/estimates/EstimateDetails';
 import { MeasurementTab } from '../components/estimates/MeasurementTab';
 import { WorkscopesSection } from '../components/estimates/WorkscopesSection';
-import { StatusPipeline } from '../components/estimates/StatusPipeline';
 import { NotesActivities } from '../components/estimates/NotesActivities';
 import { ChangeOrderTab } from '../components/estimates/ChangeOrderTab';
 import { ProductionTab } from '../components/estimates/ProductionTab';
@@ -48,7 +47,6 @@ const DESIGN_TABS: { id: DesignId; label: string }[] = [
 
 export function EstimatePage() {
   const [activeTab, setActiveTab] = useState('summary');
-  const [summaryCollapsed, setSummaryCollapsed] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
   const [notesUnread, setNotesUnread] = useState(2);
   const { designId, setDesignId, designData } = useDesign();
@@ -60,76 +58,39 @@ export function EstimatePage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#f0f2f5]" data-theme={theme} data-layout={designData.layoutVariant}>
-      {/* Design selector tabs — each design has its own accent */}
-      <div className="sticky top-0 z-40 bg-[#212529] border-b border-gray-700">
-        <div className="max-w-[1800px] mx-auto px-3">
-          <div className="flex items-center gap-2 py-2.5">
-            <PaletteIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider mr-4">Estimate set</span>
-            {DESIGN_TABS.map((tab) => {
-              const isActive = designId === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setDesignId(tab.id)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-[#0d6efd] text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+    <div className="h-screen w-full bg-[#f0f2f5] flex overflow-hidden" data-theme={theme} data-layout={designData.layoutVariant}>
+      {/* ซ้าย: หน้าเดิม — เลื่อนแค่คอลัมน์นี้ Notes อยู่ขวาไม่เลื่อนตาม */}
+      <div className="flex-1 min-w-0 flex flex-col overflow-y-auto min-h-0">
+        {/* Design selector tabs — each design has its own accent */}
+        <div className="sticky top-0 z-40 bg-[#212529] border-b border-gray-700">
+          <div className="max-w-[1800px] mx-auto px-3">
+            <div className="flex items-center gap-2 py-2.5">
+              <PaletteIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider mr-4">Estimate set</span>
+              {DESIGN_TABS.map((tab) => {
+                const isActive = designId === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setDesignId(tab.id)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-[#0d6efd] text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
-      {/* Sticky Header + Summary */}
-      <div className="sticky top-[45px] z-30 bg-white">
-        <EstimateHeader notesUnread={notesUnread} onOpenNotes={handleOpenNotes} />
-        <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
-        <PersistentSummary collapsed={summaryCollapsed} onToggle={() => setSummaryCollapsed((v) => !v)} />
-      </div>
+        {/* Sticky Header → Status + Summary → Tabs */}
+        <div className="sticky top-[45px] z-30 bg-white">
+          <EstimateHeader notesUnread={notesUnread} onOpenNotes={handleOpenNotes} />
+          <PersistentSummary />
+          <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+        </div>
 
-      {/* Notes & Activities slide-over panel */}
-      <AnimatePresence>
-        {notesOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/40 z-[100]"
-              onClick={() => setNotesOpen(false)}
-              aria-hidden
-            />
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed top-0 right-0 bottom-0 w-full max-w-lg bg-white shadow-2xl z-[101] flex flex-col"
-            >
-              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white flex-shrink-0">
-                <h2 className="text-base font-semibold text-[#212529]">Notes & Activities</h2>
-                <button
-                  type="button"
-                  onClick={() => setNotesOpen(false)}
-                  className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-                  aria-label="Close"
-                >
-                  <XIcon className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto p-4">
-                <NotesActivities />
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
-      {/* Main Content */}
-      <main className="max-w-[1800px] mx-auto px-3 py-8">
+        {/* Main Content */}
+        <main className="max-w-[1800px] mx-auto px-3 py-8 flex-1 w-full">
         <AnimatePresence mode="wait">
           {activeTab === 'summary' && (
             <motion.div key="summary" {...tabTransition} className="space-y-6">
@@ -173,12 +134,9 @@ export function EstimatePage() {
                   </div>
                 </div>
               )}
-              {/* Minimal: Status strip → main column (Details on top, Overview below) + sidebar */}
+              {/* Minimal: main column (Details on top, Overview below) + sidebar — Status moved to PersistentSummary */}
               {designData.layoutVariant === 'minimal' && (
                 <>
-                  <div className="bg-white rounded-lg border border-gray-200 shadow-sm px-5 py-4">
-                    <StatusPipeline />
-                  </div>
                   <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px] lg:items-start">
                     <div className="min-w-0 space-y-6">
                       <EstimateDetails />
@@ -269,17 +227,18 @@ export function EstimatePage() {
 
           {![
           'summary',
-          'payment',
-          'change-order',
           'schedules',
-          'ordering',
           'measurement',
           'workscopes',
+          'payment',
+          'change-order',
+          'ordering',
           'sub-contractor',
           'expenses',
           'commission',
           'services',
-          'documents'].
+          'documents',
+          ].
           includes(activeTab) &&
           <motion.div
             key="placeholder"
@@ -297,6 +256,35 @@ export function EstimatePage() {
           }
         </AnimatePresence>
       </main>
-    </div>);
+      </div>
 
+      {/* ขวา: Notes sidebar — แทรกเข้ามา หน้าเดิมหดซ้าย */}
+      <AnimatePresence>
+        {notesOpen && (
+          <motion.aside
+            initial={{ width: 0 }}
+            animate={{ width: 384 }}
+            exit={{ width: 0 }}
+            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            className="flex-shrink-0 h-screen bg-white border-l border-gray-200 shadow-lg flex flex-col overflow-hidden min-w-0"
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white flex-shrink-0">
+              <h2 className="text-base font-semibold text-[#212529]">Notes & Activities</h2>
+              <button
+                type="button"
+                onClick={() => setNotesOpen(false)}
+                className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                aria-label="Close"
+              >
+                <XIcon className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4">
+              <NotesActivities />
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }
