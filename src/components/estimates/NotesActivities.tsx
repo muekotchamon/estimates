@@ -60,6 +60,8 @@ export function NotesActivities() {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('all');
   const isCompact = layoutVariant === 'compact';
   const isMinimal = layoutVariant === 'minimal';
+  // Design 3 (minimal) uses Design 1 note layout in this panel
+  const notesUseDefaultLayout = layoutVariant === 'default' || layoutVariant === 'minimal';
 
   const feedContentCompactMinimal = (
     <>
@@ -123,8 +125,8 @@ export function NotesActivities() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="space-y-0">
-      {/* Design 1 default */}
-      {layoutVariant === 'default' && (
+      {/* Design 1 default (also used for Design 3 notes) */}
+      {notesUseDefaultLayout && (
         <>
           <div className="bg-white rounded-t-xl border border-gray-200 px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -171,18 +173,6 @@ export function NotesActivities() {
         </div>
       )}
 
-      {/* Design 3 minimal: no sub-tabs, timeline style list */}
-      {isMinimal && (
-        <div className="space-y-0">
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm px-4 py-3 flex items-center justify-between" data-card>
-            <h2 className="text-sm font-semibold text-[#212529]">Notes & Activities</h2>
-            <button className="text-xs font-medium px-2 py-1 rounded" style={{ color: 'var(--accent)' }}>+ Add</button>
-          </div>
-          <div className="bg-white rounded-lg border border-gray-200 border-t-0 shadow-sm divide-y divide-gray-50" data-card>
-            {feedContentCompactMinimal}
-          </div>
-        </div>
-      )}
     </motion.div>
   );
 
